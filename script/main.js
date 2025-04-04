@@ -1,10 +1,28 @@
-// Import the data to customize and insert them into page
+// Create an audio element for background music
+const backgroundMusic = new Audio("music.mp3");
+backgroundMusic.loop = true; // Loop the music
+backgroundMusic.volume = 0.5; // Adjust volume if needed
+
+// Function to play music
+const playMusic = () => {
+  backgroundMusic
+    .play()
+    .catch((error) => console.log("Autoplay blocked:", error));
+};
+
+// Function to stop music
+const stopMusic = () => {
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+};
+
+// Fetch and insert data into the page
 const fetchData = () => {
   fetch("customize.json")
     .then((data) => data.json())
     .then((data) => {
-      dataArr = Object.keys(data);
-      dataArr.map((customData) => {
+      const dataArr = Object.keys(data);
+      dataArr.forEach((customData, index) => {
         if (data[customData] !== "") {
           if (customData === "imagePath") {
             document
@@ -17,56 +35,30 @@ const fetchData = () => {
           }
         }
 
-        // Check if the iteration is over
-        // Run animation if so
-        if (dataArr.length === dataArr.indexOf(customData) + 1) {
-          animationTimeline();
+        // Start animation when all data is processed
+        if (index === dataArr.length - 1) {
+          document.getElementById("startBtn").style.display = "block";
         }
       });
     });
-};
-
-// Create an audio element for background music
-const backgroundMusic = new Audio("music.mp3");
-backgroundMusic.loop = true; // Loop the music
-backgroundMusic.volume = 0.5; // Adjust volume if needed
-
-// Function to start music
-const playMusic = () => {
-  backgroundMusic
-    .play()
-    .catch((error) => console.log("Autoplay blocked:", error));
-};
-
-// Function to stop music when needed
-const stopMusic = () => {
-  backgroundMusic.pause();
-  backgroundMusic.currentTime = 0;
 };
 
 // Animation Timeline
 const animationTimeline = () => {
   playMusic(); // Start music when animation starts
 
-  // Spit chars that need to be animated individually
+  // Split text for animation
   const textBoxChars = document.getElementsByClassName("hbd-chatbox")[0];
   const hbd = document.getElementsByClassName("wish-hbd")[0];
 
   textBoxChars.innerHTML = `<span>${textBoxChars.innerHTML
     .split("")
-    .join("</span><span>")}</span`;
-
+    .join("</span><span>")}</span>`;
   hbd.innerHTML = `<span>${hbd.innerHTML
     .split("")
-    .join("</span><span>")}</span`;
+    .join("</span><span>")}</span>`;
 
-  const ideaTextTrans = {
-    opacity: 0,
-    y: -20,
-    rotationX: 5,
-    skewX: "15deg",
-  };
-
+  const ideaTextTrans = { opacity: 0, y: -20, rotationX: 5, skewX: "15deg" };
   const ideaTextTransLeave = {
     opacity: 0,
     y: 20,
@@ -76,77 +68,18 @@ const animationTimeline = () => {
 
   const tl = new TimelineMax();
 
-  tl.to(".container", 0.1, {
-    visibility: "visible",
-  })
-    .from(".one", 0.7, {
-      opacity: 0,
-      y: 10,
-    })
-    .from(".two", 0.4, {
-      opacity: 0,
-      y: 10,
-    })
-    .to(
-      ".one",
-      0.7,
-      {
-        opacity: 0,
-        y: 10,
-      },
-      "+=2.5"
-    )
-    .to(
-      ".two",
-      0.7,
-      {
-        opacity: 0,
-        y: 10,
-      },
-      "-=1"
-    )
-    .from(".three", 0.7, {
-      opacity: 0,
-      y: 10,
-    })
-    .to(
-      ".three",
-      0.7,
-      {
-        opacity: 0,
-        y: 10,
-      },
-      "+=2"
-    )
-    .from(".four", 0.7, {
-      scale: 0.2,
-      opacity: 0,
-    })
-    .from(".fake-btn", 0.3, {
-      scale: 0.2,
-      opacity: 0,
-    })
-    .staggerTo(
-      ".hbd-chatbox span",
-      0.5,
-      {
-        visibility: "visible",
-      },
-      0.05
-    )
-    .to(".fake-btn", 0.1, {
-      backgroundColor: "rgb(127, 206, 248)",
-    })
-    .to(
-      ".four",
-      0.5,
-      {
-        scale: 0.2,
-        opacity: 0,
-        y: -150,
-      },
-      "+=0.7"
-    )
+  tl.to(".container", 0.1, { visibility: "visible" })
+    .from(".one", 0.7, { opacity: 0, y: 10 })
+    .from(".two", 0.4, { opacity: 0, y: 10 })
+    .to(".one", 0.7, { opacity: 0, y: 10 }, "+=2.5")
+    .to(".two", 0.7, { opacity: 0, y: 10 }, "-=1")
+    .from(".three", 0.7, { opacity: 0, y: 10 })
+    .to(".three", 0.7, { opacity: 0, y: 10 }, "+=2")
+    .from(".four", 0.7, { scale: 0.2, opacity: 0 })
+    .from(".fake-btn", 0.3, { scale: 0.2, opacity: 0 })
+    .staggerTo(".hbd-chatbox span", 0.5, { visibility: "visible" }, 0.05)
+    .to(".fake-btn", 0.1, { backgroundColor: "rgb(127, 206, 248)" })
+    .to(".four", 0.5, { scale: 0.2, opacity: 0, y: -150 }, "+=0.7")
     .from(".idea-1", 0.7, ideaTextTrans)
     .to(".idea-1", 0.7, ideaTextTransLeave, "+=1.5")
     .from(".idea-2", 0.7, ideaTextTrans)
@@ -174,78 +107,35 @@ const animationTimeline = () => {
       },
       "+=0.5"
     )
-    .to(
-      ".idea-5 .smiley",
-      0.7,
-      {
-        rotation: 90,
-        x: 8,
-      },
-      "+=0.4"
-    )
-    .to(
-      ".idea-5",
-      0.7,
-      {
-        scale: 0.2,
-        opacity: 0,
-      },
-      "+=2"
-    )
+    .to(".idea-5 .smiley", 0.7, { rotation: 90, x: 8 }, "+=0.4")
+    .to(".idea-5", 0.7, { scale: 0.2, opacity: 0 }, "+=2")
     .staggerFrom(
       ".idea-6 span",
       0.8,
-      {
-        scale: 3,
-        opacity: 0,
-        rotation: 15,
-        ease: Expo.easeOut,
-      },
+      { scale: 3, opacity: 0, rotation: 15, ease: Expo.easeOut },
       0.2
     )
     .staggerTo(
       ".idea-6 span",
       0.8,
-      {
-        scale: 3,
-        opacity: 0,
-        rotation: -15,
-        ease: Expo.easeOut,
-      },
+      { scale: 3, opacity: 0, rotation: -15, ease: Expo.easeOut },
       0.2,
       "+=1"
     )
     .staggerFromTo(
       ".baloons img",
       2.5,
-      {
-        opacity: 0.9,
-        y: 1400,
-      },
-      {
-        opacity: 1,
-        y: -1000,
-      },
+      { opacity: 0.9, y: 1400 },
+      { opacity: 1, y: -1000 },
       0.2
     )
     .from(
       ".lydia-dp",
       0.5,
-      {
-        scale: 3.5,
-        opacity: 0,
-        x: 25,
-        y: -25,
-        rotationZ: -45,
-      },
+      { scale: 3.5, opacity: 0, x: 25, y: -25, rotationZ: -45 },
       "-=2"
     )
-    .from(".hat", 0.5, {
-      x: -100,
-      y: 350,
-      rotation: -180,
-      opacity: 0,
-    })
+    .from(".hat", 0.5, { x: -100, y: 350, rotation: -180, opacity: 0 })
     .staggerFrom(
       ".wish-hbd span",
       0.7,
@@ -261,29 +151,12 @@ const animationTimeline = () => {
     .staggerFromTo(
       ".wish-hbd span",
       0.7,
-      {
-        scale: 1.4,
-        rotationY: 150,
-      },
-      {
-        scale: 1,
-        rotationY: 0,
-        color: "#ff69b4",
-        ease: Expo.easeOut,
-      },
+      { scale: 1.4, rotationY: 150 },
+      { scale: 1, rotationY: 0, color: "#ff69b4", ease: Expo.easeOut },
       0.1,
       "party"
     )
-    .from(
-      ".wish h5",
-      0.5,
-      {
-        opacity: 0,
-        y: 10,
-        skewX: "-15deg",
-      },
-      "party"
-    )
+    .from(".wish h5", 0.5, { opacity: 0, y: 10, skewX: "-15deg" }, "party")
     .staggerTo(
       ".eight svg",
       1.5,
@@ -296,25 +169,31 @@ const animationTimeline = () => {
       },
       0.3
     )
-    .to(".six", 0.5, {
-      opacity: 0,
-      scale: 0.5,
-      y: 10,
-      zIndex: "-1",
-    })
-
+    .to(".six", 0.5, { opacity: 0, scale: 0.5, y: 10, zIndex: "-1" })
     .staggerFrom(".nine p", 1, ideaTextTrans, 1.2)
-    .to(
-      ".last-smile",
-      0.5,
-      {
-        rotation: 90,
-      },
-      "+=1"
-    );
+    .to(".last-smile", 0.5, { rotation: 90 }, "+=1");
 
-  // Restart Animation and Music on click
+  document.getElementById("startBtn").style.display = "none";
 };
 
-// Run fetch and animation in sequence
+// Add Start Button
+const startButton = document.createElement("button");
+startButton.id = "startBtn";
+startButton.innerText = "Just Click my❤️";
+startButton.style.position = "fixed";
+startButton.style.top = "50%";
+startButton.style.left = "50%";
+startButton.style.transform = "translate(-50%, -50%)";
+startButton.style.padding = "15px 30px";
+startButton.style.fontSize = "18px";
+startButton.style.cursor = "pointer";
+startButton.style.background = "#ff69b4";
+startButton.style.border = "none";
+startButton.style.color = "#fff";
+startButton.style.display = "none"; // Initially hidden
+startButton.onclick = animationTimeline;
+
+document.body.appendChild(startButton);
+
+// Run fetch and show button
 fetchData();
