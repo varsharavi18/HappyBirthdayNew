@@ -179,7 +179,7 @@ const animationTimeline = () => {
 // Add Start Button
 const startButton = document.createElement("button");
 startButton.id = "startBtn";
-startButton.innerText = "Just Click my❤️";
+startButton.innerText = "Touch me🤤💋";
 startButton.style.position = "fixed";
 startButton.style.top = "50%";
 startButton.style.left = "50%";
